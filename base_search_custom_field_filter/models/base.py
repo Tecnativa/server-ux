@@ -14,17 +14,16 @@ class Base(models.AbstractModel):
         arch = etree.fromstring(res['arch'])
         for custom_filter in custom_filters:
             node = False
-            if custom_filter.position_after:
+            if custom_filter['position_after']:
                 node = arch.xpath(
-                    "//field[@name='%s']" % custom_filter.position_after)
+                    "//field[@name='%s']" % custom_filter['position_after'])
             if not node:
                 node = arch.xpath("//field[last()]")
             if node:
                 elem = etree.Element('field', {
-                    'name': 'ir_ui_custom_filter_%s' % custom_filter.id,
-                    'string': custom_filter.name,
-                    'filter_domain': (
-                        "[('%s', '=', self)]" % custom_filter.expression),
+                    'name': 'ir_ui_custom_filter_%s' % custom_filter['id'],
+                    'string': custom_filter['name'],
+                    'custom_filter_path': custom_filter['expression'],
                 })
                 node[0].addnext(elem)
         res['arch'] = etree.tostring(arch)
@@ -38,8 +37,8 @@ class Base(models.AbstractModel):
             view_id=view_id, view_type=view_type, toolbar=toolbar,
             submenu=submenu)
         if view_type == 'search':
-            custom_filters = self.env['ir.ui.custom.field.filter'].search(
-                [("model_name", "=", res.get("model"))])
+            custom_filters = self.env['ir.ui.custom.field.filter'].\
+                _get_custom_filters(res.get("model"))
             if custom_filters:
                 res = self._add_custom_filters(res, custom_filters)
         return res
@@ -51,11 +50,10 @@ class Base(models.AbstractModel):
         """
         res = super().fields_get(allfields=allfields, attributes=attributes)
         if self.env.context.get('custom_field_filter'):
-            custom_filters = self.env['ir.ui.custom.field.filter'].search(
-                [("model_name", "=", self._name)])
-            for custom_filter in custom_filters:
-                field = custom_filter._get_related_field()
-                res['ir_ui_custom_filter_%s' % custom_filter.id] = (
+            for custom_filter in self.env['ir.ui.custom.field.filter']. \
+                    _get_custom_filters(self._name):
+                field = custom_filter['related_field']
+                res['ir_ui_custom_filter_%s' % custom_filter['id']] = (
                     field.get_description(self.env))
         return res
 
