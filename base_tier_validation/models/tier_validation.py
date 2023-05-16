@@ -198,9 +198,7 @@ class TierValidation(models.AbstractModel):
             tiers = self.env["tier.definition"].search([("model", "=", self._name)])
             valid_tiers = any([rec.evaluate_tier(tier) for tier in tiers])
             rec.need_validation = (
-                not rec.review_ids
-                and valid_tiers
-                and getattr(rec, self._state_field) in self._state_from
+                not rec.review_ids and valid_tiers and rec._check_state_from_condition()
             )
 
     def evaluate_tier(self, tier):
@@ -229,7 +227,7 @@ class TierValidation(models.AbstractModel):
         Check we are in origin state and not destination state
         """
         self.ensure_one()
-        return getattr(self, self._state_field) in self._state_from and not vals.get(
+        return self._check_state_from_condition() and not vals.get(
             self._state_field
         ) in (self._state_to + [self._cancel_state])
 
@@ -270,10 +268,16 @@ class TierValidation(models.AbstractModel):
             self.mapped("review_ids").unlink()
         return super(TierValidation, self).write(vals)
 
+    def _check_state_from_condition(self):
+        return self.env.context.get("skip_check_state_condition") or (
+            self._state_field in self._fields
+            and getattr(self, self._state_field) in self._state_from
+        )
+
     def _check_state_conditions(self, vals):
         self.ensure_one()
         return (
-            getattr(self, self._state_field) in self._state_from
+            self._check_state_from_condition()
             and vals.get(self._state_field) in self._state_to
         )
 
@@ -423,7 +427,7 @@ class TierValidation(models.AbstractModel):
         td_obj = self.env["tier.definition"]
         tr_obj = created_trs = self.env["tier.review"]
         for rec in self:
-            if getattr(rec, self._state_field) in self._state_from:
+            if rec._check_state_from_condition():
                 if rec.need_validation:
                     tier_definitions = td_obj.search(
                         [("model", "=", self._name)], order="sequence desc"
