@@ -520,10 +520,9 @@ class TierValidation(models.AbstractModel):
             node.addprevious(new_element)
 
     def _add_tier_validation_reviews(self, node, params):
-        str_element = self.env["ir.qweb"]._render(
-            "base_tier_validation.tier_validation_reviews", params
-        )
-        node.addnext(etree.fromstring(str_element))
+        res = self.env["tier.validation"].sudo().fields_view_get(view_type="form")
+        for new_element in etree.fromstring(res["arch"]):
+            node.addnext(new_element)
 
     @api.model
     def fields_view_get(

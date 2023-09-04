@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Custom form !-->
+    <record id="tier_validation_view_form" model="ir.ui.view">
+        <field name="name">tier.validation.form</field>
+        <field name="model">tier.validation</field>
+        <field name="arch" type="xml">
+            <form>
+                <div
+                    class="o_form_sheet panel-group"
+                    attrs="{'invisible':[('review_ids', '=', [])]}"
+                >
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a
+                                    class="o_info_btn"
+                                    data-toggle="collapse"
+                                    href="#"
+                                    data-target="#collapse1"
+                                >
+                                    Reviews
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse collapse">
+                            <div class="panel-body o_review">
+                                <field
+                                    name="review_ids"
+                                    context="{'tree_view_ref': 'base_tier_validation.tier_review_view_tree_custom'}"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </field>
+    </record>
+</odoo>

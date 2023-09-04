@@ -81,11 +81,4 @@
         </div>
         </div>
     </template>
-    <template id="tier_validation_reviews">
-        <field
-            name="review_ids"
-            widget="tier_validation"
-            attrs="{'invisible':[('review_ids', '=', [])]}"
-        />
-    </template>
 </odoo>
