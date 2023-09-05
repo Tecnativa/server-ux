@@ -41,6 +41,21 @@
                 <field name="done_by" />
                 <field name="reviewed_date" />
                 <field name="comment" />
+                <field name="can_review" invisible="1" />
+                <button
+                    name="validate_tier"
+                    type="object"
+                    class="oe_inline oe_button btn-success"
+                    icon="fa-thumbs-up"
+                    attrs="{'invisible': [('can_review', '=', False)]}"
+                />
+                <button
+                    name="reject_tier"
+                    type="object"
+                    class="btn-icon btn-danger"
+                    icon="fa-thumbs-down"
+                    attrs="{'invisible': [('can_review', '=', False)]}"
+                />
             </tree>
         </field>
     </record>

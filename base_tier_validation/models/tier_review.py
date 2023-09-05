@@ -110,3 +110,15 @@ class TierReview(models.Model):
             if not reviewer_field or not reviewer_field._name == "res.users":
                 raise ValidationError(_("There are no res.users in the selected field"))
         return reviewer_field
+
+    def validate_tier(self):
+        self.ensure_one()
+        record = self.env[self.model].browse(self.res_id)
+        record._validate_tier(tiers=self)
+        record._update_counter()
+
+    def reject_tier(self):
+        self.ensure_one()
+        record = self.env[self.model].browse(self.res_id)
+        record._rejected_tier(tiers=self)
+        record._update_counter()
