@@ -5,3 +5,6 @@
 * Pedro Gonzalez <pedro.gonzalez@pesol.es>
 * Kitti U. <kittiu@ecosoft.co.th>
 * Saran Lim. <saranl@ecosoft.co.th>
+* Evan Soh <evan.soh@omnisoftsolution.com>
+* Manuel Regidor <manuel.regidor@sygel.es>
+* Eduardo de Miguel <edu@moduon.team>
